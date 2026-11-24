@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Modern Option Trader QUIK</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="logo" title="Modern Option Trader QUIK">Modern Option Trader <span>QUIK</span></div>
+  <nav class="views">
+    <button data-view="chain" class="active">Опционы</button>
+    <button data-view="calc">Калькулятор</button>
+  </nav>
+  <div class="base-pick">
+    <select id="baseSel"></select>
+  </div>
+  <div class="under" id="underBox">
+    <div><label>Фьючерс</label><b id="uLast">—</b></div>
+    <div><label>Bid / Ask</label><span id="uBA">—</span></div>
+    <div><label>ATM IV</label><span id="uIV">—</span></div>
+  </div>
+  <div class="spacer"></div>
+  <button class="dock-btn" id="dockBtn" title="Панель фьючерса: стакан, торговля, дельта-хедж">Фьючерс ▸</button>
+  <div class="acct" id="acctBox"></div>
+  <div class="status" id="status"><i></i><span>…</span></div>
+</header>
+
+<main class="work">
+<div class="views-wrap">
+<!-- ===================== CHAIN VIEW ===================== -->
+<section id="view-chain" class="view active">
+  <div class="exp-bar" id="expBar"></div>
+  <div class="chain-wrap">
+    <div class="chain-main">
+      <div class="chain-head">
+        <div class="side-title calls">КОЛЛЫ</div>
+        <div class="chain-tools">
+          <label class="chk"><input type="checkbox" id="optGreeks" checked> Греки</label>
+          <label class="chk"><input type="checkbox" id="optOI" checked> ОИ</label>
+          <label class="chk"><input type="checkbox" id="optGO"> ГО</label>
+          <label>Страйков <select id="optStrikes"><option>10</option><option selected>16</option><option>24</option><option value="999">все</option></select></label>
+        </div>
+        <div class="side-title puts">ПУТЫ</div>
+      </div>
+      <div class="table-scroll" id="chainScroll">
+        <table class="chain" id="chainTable"></table>
+      </div>
+    </div>
+    <aside class="side" id="sidePanel">
+      <div class="ticket empty" id="ticket">
+        <div class="ph">Нажмите на <b class="g">Bid</b> или <b class="r">Ask</b> в доске, чтобы открыть тикет</div>
+      </div>
+      <div class="mini" id="miniSummary"></div>
+    </aside>
+  </div>
+  <div class="bottom">
+    <div class="tabs" id="bottomTabs">
+      <button data-tab="pos" class="active">Позиции <span id="cntPos"></span></button>
+      <button data-tab="ord">Заявки <span id="cntOrd"></span></button>
+      <button data-tab="trd">Сделки</button>
+      <button data-tab="log">Журнал <span id="cntLog"></span></button>
+    </div>
+    <div class="tab-body" id="bottomBody"></div>
+  </div>
+</section>
+
+<!-- ===================== CALCULATOR VIEW ===================== -->
+<section id="view-calc" class="view">
+  <div class="calc-grid">
+    <div class="calc-chart-box">
+      <div class="calc-toolbar">
+        <div class="legend" id="calcLegend"></div>
+        <div class="seg" id="unitSeg"><button data-u="pt" class="active">пункты</button><button data-u="rub">₽</button></div>
+      </div>
+      <div class="chart-holder"><canvas id="payoff"></canvas><div class="tip" id="chartTip"></div></div>
+      <div class="sliders">
+        <div class="sl"><label>Дата оценки <b id="dateLbl"></b></label><input type="range" id="dateSl" min="0" max="1000" value="0"></div>
+        <div class="sl"><label>Сдвиг IV <b id="ivLbl"></b></label><input type="range" id="ivSl" min="-30" max="30" value="0" step="0.5"></div>
+        <div class="sl"><label>Диапазон цены <b id="rngLbl"></b></label><input type="range" id="rngSl" min="2" max="50" value="12" step="1"></div>
+      </div>
+    </div>
+    <aside class="calc-side">
+      <div class="stats" id="calcStats"></div>
+      <div class="greeks-box" id="calcGreeks"></div>
+      <div class="scen" id="calcScen"></div>
+    </aside>
+  </div>
+  <div class="calc-bottom">
+    <div class="legs-box">
+      <div class="box-head">
+        <h3>Ноги стратегии</h3>
+        <label class="chk"><input type="checkbox" id="incPos" checked> учитывать текущие позиции</label>
+        <div class="spacer"></div>
+        <button class="btn sm" id="addLeg">+ нога</button>
+        <button class="btn sm ghost" id="clearPlan">Очистить план</button>
+        <button class="btn sm primary" id="sendPlan">Выставить план…</button>
+      </div>
+      <div class="table-scroll"><table class="legs" id="legsTable"></table></div>
+    </div>
+    <div class="presets-box">
+      <div class="box-head">
+        <h3>Готовые профили</h3>
+      </div>
+      <div class="preset-params">
+        <label>Экспирация <select id="pExp"></select></label>
+        <label>Центр. страйк <select id="pK"></select></label>
+        <label>Ширина <select id="pW"><option>1</option><option selected>2</option><option>3</option><option>4</option><option>6</option></select> стр.</label>
+        <label>Кол-во <input type="number" id="pQ" value="1" min="1" step="1"></label>
+        <label class="chk"><input type="checkbox" id="pReplace" checked> заменить план</label>
+        <label>Вход <select id="pPx"><option value="mark">по Mark</option><option value="ba">по Bid/Ask</option></select></label>
+      </div>
+      <div class="presets" id="presetGrid"></div>
+    </div>
+  </div>
+</section>
+
+</div>
+<div class="splitter" id="splitter" title="Перетащите, чтобы изменить ширину"></div>
+<aside class="fut-dock" id="futDock">
+  <div class="fd-head" id="fdHead"></div>
+  <div class="fd-delta" id="fdDelta"></div>
+  <div class="fd-form" id="fdForm"></div>
+  <div class="fd-book" id="fdBook"></div>
+  <div class="fd-orders" id="fdOrders"></div>
+</aside>
+</main>
+
+<div class="modal" id="modal" hidden><div class="modal-card" id="modalCard"></div></div>
+<div class="toasts" id="toasts"></div>
+
+<script src="bs.js"></script>
+<script src="demo.js"></script>
+<script src="app.js"></script>
+<script src="calc.js"></script>
+<script src="fut.js"></script>
+</body>
+</html>
